@@ -1,0 +1,321 @@
+---
+title: "Seminar 2: Introduction to Data I"
+subtitle: "LSE ME314: Introduction to Data Science and Machine Learning"
+date-modified: "15 July 2025" 
+toc: true
+format: html
+execute:
+  echo: true
+  eval: false
+---
+
+## Plan for Today: 
+We will learn how to process and manipulate data in R and Python using `tidyverse` and `dplyr` in R, as well as `pandas` and `numpy` in Python.
+
+----
+
+### Recap from Last Seminar: 
+
+In your VS Code terminal, write the commands below to check that you have installed everything neccessary. If any of those commands, return an error, go back to yesterday's seminar code and follow the instruction to install the extensions. 
+
+```{bash}
+
+# If you're on macOS or Linux, run:
+which python3
+which R
+which git
+R --version
+quarto check
+
+
+# If you're on Windows (PowerShell), run:
+where python
+where R 
+where git
+R --version
+quarto check
+
+```
+
+
+### Set up Python Environment in Quarto
+
+#### Installing Dependencies
+
+Third party libraries do not come with Python, and need to be installed before use. In the VS Code terminal, install numpy and and pandas.
+
+```{bash, eval=FALSE}
+# Mac OS
+which python # the path where python is installed 
+pip install --user numpy pandas # install numpy and pandas for this session
+
+#Windows
+where python
+python -m pip install numpy pandas
+```
+
+
+Now, remember the path where python is installed as you will need to copy it below to point it to python for the reticulate package to render the document. 
+
+```{r, warning=FALSE}
+library(reticulate)
+use_python("YOUR_PATH_TO_PYTHON", required = TRUE) # use base Python installation
+
+
+```
+
+
+::: {.callout-note}       
+__Information__:  Our quarto document is using R as the engine, and is trying to run a {python} chunk via `reticulate`. The reticulate package provides a comprehensive set of tools for interoperability between Python and R.
+:::
+
+```{python}
+print("Python code is running")
+```
+
+
+```{r}
+install.packages("languageserver")
+print("R code is running")
+```
+
+
+### Recap from last Seminar: Data Types in R and Python
+
+#### 1. Exercise 
+
+Create R vectors for each data type. In a single R code chunk, write code that:
+
+- Creates a numeric vector called numeric_vector containing the values 3.14, 0, and Inf.
+
+- Creates a logical vector called logical_vector containing the values TRUE, FALSE, and NA.
+
+- Creates a character vector called character_vector containing the strings "apple", "banana", and "cherry".
+
+- Creates a factor called factor_vector from the character vector c("red", "green", "blue", "green").
+   
+```{r}
+# your code goes here
+```
+
+
+#### 2. Exercise
+
+In a single Python code cell, write a code that:
+
+- Assigns the float 3.14 to a variable float.
+
+- Assigns the integer 42 to a variable integer.
+
+- Assigns the string "hello world" to a variable string.
+
+Then print out the type of each variable using type().
+
+```{python}
+# your code goes here
+```
+
+
+### Processing and Manipulating Data in R
+
+In R, the go-to package for data wrangling and manipulation is `tidyverse` and `dplyr`. Dyplr works with a pipe operator `%>%`. It pipes an object as the first argument into a subsequent function. This is an alternative notation to writing the object as the first input in the function directly. 
+
+#### 3. Exercise
+
+Set up your R workspace by installing and loading packages. We will be using 'tidyverse' package in this session. Import the dataset in the data folder 'ip_and_unemployment.csv' in R using tidyverse and in Python using panda which you should have installed in your set up. 
+
+Install the tidyverse package. You will be asked to select a CRAN mirror which should pop up as a separate window or below in your R terminal. Select the one in UK:London.
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+
+Import the `ip_and_unemployment.csv` dataset using R code, which you find in the data folder of the seminar2 folder using `read.csv()` and call it ip_and_unemployment_r. Then print out the first rows of the dataset using `head()`
+
+```{r, eval=FALSE}
+# your code goes here
+```
+
+
+Now, import the same dataset into python using pandas `read_csv()` and print out the first rows using `head()`.
+
+```{python, eval=FALSE}
+import pandas as pd
+
+# your code goes here
+```
+
+
+Compare R and Python Indexing: What do you notice? 
+
+```{r, eval=FALSE}
+ip_and_unemployment_r[1,]
+```
+
+
+```{python, eval=FALSE}
+ip_and_unemployment_py[:1]
+```
+
+
+#### 4. Exercise
+
+Now, let us start working with the datasets to be able to answer the following questions.
+
+What are the highest unemployment rates for France and Spain during the time of the sample?  What are the lowest values for industrial production for the two countries? Make sure to delete NA values in only the time series of interest. 
+
+As you could see above when displaying the dataset, it is not in a useful format for us to work with. Therefore, we will change it by following the steps below: 
+
+Step 1. Pivot the dataset
+   
+Start by pivoting the dataset from long to wide format using `pivot_wider()`. You want to turn the `series` column into two separate `unemployment` and `ip`columns and call the new dataset `ipu_clean`.
+   
+```{r}
+# your code goes here
+```
+
+
+Step 2. Compute the extrema
+   
+For both countries, France and Spain, write separate code and find the maximum unemployment rate and the minimum industrial-production value in the sample using the `filter()` function to filter for the correct country and then filter again to get the highest unemployment rate and the lowest industrial production rate using `max()` and `min()`.
+
+Be sure to drop NA values only when computing each max or min (e.g. via `na.rm = TRUE`), so that other countries or other dates aren’t affected.
+
+Remember that `na.rm = TRUE` applies only to the max()/min() call, so you don’t drop entire rows with missing other variables.
+
+```{r}
+
+# France
+# write your code here
+
+```
+
+
+```{r}
+# Spain
+# write your code here
+
+```
+
+
+#### 5. Exercise 
+
+Add three new columns to the dataframe using the `mutate()` function
+
+  1. the square of the industrial production percentage change, 
+  2. the natural logarithm of the unemployment rate, and 
+  3. the interaction (i.e. the product) of industrial production percentage 
+  change and unemployment rate.
+  
+```{r}
+# your code goes here
+```
+
+
+### Processing and Manipulating Data in Python
+
+We will be working with two main packages for this seminar: Numpy and Pandas.
+
+#### Numpy
+
+NumPy (Numerical Python) is an open source mathematical and scientific computing library for Python programming tasks.  It offers a collection of high-level mathematical functions as well as logical and mathematical capabilities for multi-dimensional arrary and matrices.
+
+Objects:
+
+- Homogenous N-dimensional array (support various data types)
+  
+- Matrices
+
+#### Pandas
+
+Pandas is a third party library for data analysis, integrating low level modelling tools such as importing, cleaning, aggregating and manipulating tabular data.
+
+Objects:
+
+- Heterogeneous DataFrame (rows and columns) (2d)
+  
+- Series: a single column of data (1d)
+
+![Pandas Dataframe: Source: [Dataquest](http://app.dataquest.io/m/291/introduction-to-pandas/1/pandas-and-numpy)](figs/pandas_df.svg "Pandas Dataframe"){width=300}
+
+We are creating our own pandas dataframe to work with it in this exercise. 
+
+```{python}
+
+import pandas as pd
+import numpy as np
+
+CoffeeOrders = pd.DataFrame(
+    {
+        "Product": ["coffee", "coffee", "coffee", "coffee", "coffee", "latte", "latte"],
+        "Version": ["strong", "strong", "strong", "decaf", "decaf", "strong", "decaf"],
+        "Size": ["small", "large", "large", "small", "small", "large", "small"],
+        "Quantity": [4, 2, 2, 3, 3, 4, 5],
+    }
+)
+
+print(CoffeeOrders)
+
+```
+
+
+#### 6. Exercise
+
+Your task is to create a summary table showing the total quantity of each coffee type ordered by each customer. Use pandas' pivot_table() function to transform your data from long format (one row per item) to wide format (customers as rows, coffee types as columns).
+
+__Hints:__
+
+- values= should be the column containing quantities
+
+- index= should be the column containing customer information
+
+- columns= should be the column containing coffee types
+  
+- aggfunc= should be an operation that gives you the mean
+
+The results should be a table where each row is a customer, each column is a coffee type, and each cell shows the total quantity ordered.
+
+```{python}
+# your code goes here
+```
+
+
+#### 7. Exercise (optional)
+
+Import the following dataset using pandas and transform it into long format using `pd.melt()` and call it 'df_long'.
+
+```{python}
+# your code goes here
+```
+
+
+Now, filter the dataset to only include observation for Italy and for the year 2020.
+
+```{python}
+# your code goes here
+```
+
+
+Lastly, let us examine the dimensions and structure of data objects: We will be using the 'df_long' dataset and inspect the dataset. 
+
+```{python}
+print(df_long.shape) # gives you the number of rows and the number of columns
+print(df_long.dtypes) # gives you the data types
+print(df_long.describe(["value"])) # descriptive statistics for one column
+print(df_long["value"].describe()) # descriptive statistics for all numeric columns in df 
+print(df_long["country"].value_counts()) #  count the appearance for each category
+
+```
+
+
+## By the end of this seminar you should be able to…
+
+- Import data into R and Python 
+  
+- Manipulate data and datasets and transform them from wide into long format or vice versa or filter based on conditions
+  
+- Create new variables using mutate()
+  
+- Answer specific research questions by combining multiple data manipulation steps and handle missing values appropriately during calculations
