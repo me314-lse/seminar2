@@ -45,7 +45,7 @@ quarto check
 
 Third party libraries do not come with Python, and need to be installed before use. In the VS Code terminal, install numpy and and pandas.
 
-```{bash, eval=FALSE}
+```{bash}
 # Mac OS
 which python # the path where python is installed 
 pip install --user numpy pandas # install numpy and pandas for this session
@@ -135,14 +135,14 @@ library(tidyverse)
 
 Import the `ip_and_unemployment.csv` dataset using R code, which you find in the data folder of the seminar2 folder using `read.csv()` and call it ip_and_unemployment_r. Then print out the first rows of the dataset using `head()`
 
-```{r, eval=FALSE}
+```{r}
 # your code goes here
 ```
 
 
 Now, import the same dataset into python using pandas `read_csv()` and print out the first rows using `head()`.
 
-```{python, eval=FALSE}
+```{python}
 import pandas as pd
 
 # your code goes here
@@ -151,12 +151,12 @@ import pandas as pd
 
 Compare R and Python Indexing: What do you notice? 
 
-```{r, eval=FALSE}
+```{r}
 ip_and_unemployment_r[1,]
 ```
 
 
-```{python, eval=FALSE}
+```{python}
 ip_and_unemployment_py[:1]
 ```
 
