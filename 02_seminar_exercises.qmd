@@ -10,6 +10,7 @@ execute:
 ---
 
 ## Plan for Today: 
+
 We will learn how to process and manipulate data in R and Python using `tidyverse` and `dplyr` in R, as well as `pandas` and `numpy` in Python.
 
 ----
