@@ -304,7 +304,6 @@ Lastly, let us examine the dimensions and structure of data objects: We will be 
 ```{python}
 print(df_long.shape) # gives you the number of rows and the number of columns
 print(df_long.dtypes) # gives you the data types
-print(df_long.describe(["value"])) # descriptive statistics for one column
 print(df_long["value"].describe()) # descriptive statistics for all numeric columns in df 
 print(df_long["country"].value_counts()) #  count the appearance for each category
 
