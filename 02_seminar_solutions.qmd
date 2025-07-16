@@ -1,5 +1,5 @@
 ---
-title: "Seminar 2: Introduction to Data I"
+title: "Seminar 2: Introduction to Data I- Solution"
 subtitle: "LSE ME314: Introduction to Data Science and Machine Learning"
 date-modified: "15 July 2025" 
 toc: true
@@ -10,7 +10,6 @@ execute:
 ---
 
 ## Plan for Today: 
-
 We will learn how to process and manipulate data in R and Python using `tidyverse` and `dplyr` in R, as well as `pandas` and `numpy` in Python.
 
 ----
@@ -45,7 +44,7 @@ quarto check
 
 Third party libraries do not come with Python, and need to be installed before use. In the VS Code terminal, install numpy and and pandas.
 
-```{bash}
+```{bash, eval=FALSE}
 # Mac OS
 which python # the path where python is installed 
 pip install --user numpy pandas # install numpy and pandas for this session
@@ -59,11 +58,9 @@ python -m pip install numpy pandas
 Now, remember the path where python is installed as you will need to copy it below to point it to python for the reticulate package to render the document. 
 
 ```{r, warning=FALSE}
-install.packages("reticulate")
 library(reticulate)
 use_python("/Users/charlottekuberka/anaconda3/envs/ox/bin/python", required = TRUE) # use base Python installation
 
-C:\\User\\
 
 ```
 
@@ -78,7 +75,7 @@ print("Python code is running")
 
 
 ```{r}
-install.packages("languageserver")
+#install.packages("languageserver")
 print("R code is running")
 ```
 
@@ -100,9 +97,12 @@ Create R vectors for each data type. In a single R code chunk, write code that:
 ```{r}
 numeric_vector <- c(3.14, 0, Inf)
 print(numeric_vector)
-
 logical_vector <- c(TRUE, FALSE, NA)
 print(logical_vector)
+character <- c("apple", "banana", "cherry")
+print(character)
+factor <- as.factor(c("red", "green", "blue", "green"))
+print(factor)
 ```
 
 
@@ -120,13 +120,13 @@ Then print out the type of each variable using type().
 
 ```{python}
 float = 3.14
-type(float)
+print(type(float))
 
 integer = 42
-type(integer)
+print(type(integer))
 
 string = "hello world"
-type(string)
+print(type(string))
 ```
 
 
@@ -149,31 +149,29 @@ library(tidyverse)
 Import the `ip_and_unemployment.csv` dataset using R code, which you find in the data folder of the seminar2 folder using `read.csv()` and call it ip_and_unemployment_r. Then print out the first rows of the dataset using `head()`
 
 ```{r}
-ip_and_unemployment_r <- read.csv("/Users/charlottekuberka/Desktop/seminar2/data/ip_and_unemployment.csv")
+ip_and_unemployment_r <- read.csv("/Users/charlottekuberka/Desktop/ME314/Seminar2_MY314/data/ip_and_unemployment.csv")
 
 head(ip_and_unemployment_r)
 ```
 
 
-```{r}
-ip_and_unemployment_r$date
-```
+Now, import the same dataset into python using pandas `read_csv()`, call it ip_and_unemployment_python and print out the first rows using `head()`.
 
-Now, import the same dataset into python using pandas `read_csv()` and print out the first rows using `head()`.
 
-```{python}
+```{python }
 import pandas as pd
 
-ip_and_unemployment_py = pd.read_csv("/Users/charlottekuberka/Desktop/seminar2/data/ip_and_unemployment.csv")
+ip_and_unemployment_python = pd.read_csv("/Users/charlottekuberka/Desktop/ME314/Seminar2_MY314/data/ip_and_unemployment.csv")
 
-ip_and_unemployment_py.head()
+print(ip_and_unemployment_python.head())
 ```
 
 
 Compare R and Python Indexing: What do you notice? 
 
 ```{r}
-ip_and_unemployment_r[1,1]
+
+ip_and_unemployment_r[1,]
 ```
 
 
@@ -196,11 +194,10 @@ Start by pivoting the dataset from long to wide format using `pivot_wider()`. Yo
    
 ```{r}
 library(tidyverse)
-ipu_clean <- ip_and_unemployment_r %>% 
-pivot_wider(names_from = "series", values_from = "value")
 
-head(ipu_clean)
-
+ipu_clean <- ip_and_unemployment_r %>%
+  pivot_wider(id_cols = c("country", "date"), 
+              names_from = "series", values_from = "value")  # long to wide
 ```
 
 
@@ -213,21 +210,20 @@ Be sure to drop NA values only when computing each max or min (e.g. via `na.rm =
 Remember that `na.rm = TRUE` applies only to the max()/min() call, so you don’t drop entire rows with missing other variables.
 
 ```{r}
-
 # France
-ipu_clean %>% 
-filter(country == "france") %>%
-filter(unemployment == max(unemployment, na.rm = TRUE)) %>%
-filter(ip == min(ip, na.rm = TRUE))
-
-
+ipu_clean %>%
+  filter(country == "france") %>%
+  filter(unemployment == max(unemployment, na.rm = TRUE) | 
+           ip == min(ip, na.rm = TRUE)) 
 ```
 
 
 ```{r}
 # Spain
-# write your code here
-
+ipu_clean %>%
+  filter(country == "spain") %>%
+  filter(unemployment == max(unemployment, na.rm = TRUE) | 
+           ip == min(ip, na.rm = TRUE))
 ```
 
 
@@ -241,7 +237,11 @@ Add three new columns to the dataframe using the `mutate()` function
   change and unemployment rate.
   
 ```{r}
-# your code goes here
+ipu_clean %>%
+  mutate(ip_sq = ip ^ 2,
+         unemployment_ln = log(unemployment),
+         ip_unemployment = ip * unemployment) %>%
+  head()
 ```
 
 
@@ -274,7 +274,6 @@ Objects:
 We are creating our own pandas dataframe to work with it in this exercise. 
 
 ```{python}
-
 import pandas as pd
 import numpy as np
 
@@ -309,7 +308,13 @@ __Hints:__
 The results should be a table where each row is a customer, each column is a coffee type, and each cell shows the total quantity ordered.
 
 ```{python}
-# your code goes here
+OrderSummary = CoffeeOrders.pivot_table(
+    values="Quantity", # the values to aggregate
+    index=["Product", "Version"], # the rows to group by 
+    columns=["Size"], # the columns to group by 
+    aggfunc="mean", # the aggregation function to apply 
+    fill_value=0, # the value to replace missing values with
+)
 ```
 
 
@@ -318,14 +323,24 @@ The results should be a table where each row is a customer, each column is a cof
 Import the following dataset using pandas and transform it into long format using `pd.melt()` and call it 'df_long'.
 
 ```{python}
-# your code goes here
+df = pd.read_csv("data/ip.csv")
+df_long = df.melt(id_vars=["country"], var_name="year", value_name="value")
+print(df_long)
+```
+
+
+```{python}
+df = pd.read_csv("/Users/charlottekuberka/Desktop/ME314/Seminar2_MY314/data/ip.csv")
+
+print(df)
 ```
 
 
 Now, filter the dataset to only include observation for Italy and for the year 2020.
 
 ```{python}
-# your code goes here
+df_italy = df_long[(df_long['country']=="italy") & (df_long['year'] == "01.01.2020")]
+print(df_italy)
 ```
 
 
@@ -349,3 +364,4 @@ print(df_long["country"].value_counts()) #  count the appearance for each catego
 - Create new variables using mutate()
   
 - Answer specific research questions by combining multiple data manipulation steps and handle missing values appropriately during calculations
+
